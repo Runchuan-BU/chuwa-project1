@@ -1,65 +1,50 @@
 import express from 'express';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import cors from 'cors';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import cookieParser from 'cookie-parser';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import productRoutes from './routes/productRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
+
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
-// Serve static files from React build
+// Serve static files from frontend build
 app.use(express.static(join(__dirname, '../frontend/dist')));
 
-// API Routes
-app.get('/api/hello', (req, res) => {
-  res.json({ 
-    message: 'Hello from Node.js backend!',
-    timestamp: new Date().toISOString()
-  });
-});
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
 
-app.get('/api/users', (req, res) => {
-  res.json([
-    { id: 1, name: 'John Doe', email: 'john@example.com' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com' }
-  ]);
-});
-
-app.post('/api/users', (req, res) => {
-  const { name, email } = req.body;
-  
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Name and email are required' });
-  }
-  
-  const newUser = {
-    id: Date.now(),
-    name,
-    email,
-    createdAt: new Date().toISOString()
-  };
-  
-  res.status(201).json(newUser);
-});
-
-// Catch all handler for React app
+// Fallback route for SPA
 app.get('*', (req, res) => {
   res.sendFile(join(__dirname, '../frontend/dist/index.html'));
 });
 
-// Error handling
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
-});
+// MongoDB Connection
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log('✅ MongoDB Connected');
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  })
+  .catch((err) => console.error('❌ MongoDB connection error:', err));
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`API: http://localhost:${PORT}/api`);
-}); 
+
