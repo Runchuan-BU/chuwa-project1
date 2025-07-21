@@ -2,7 +2,7 @@ import ProductForm from "../components/ProductForm";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { fetchUserProfile } from "../store/authSlice";
+import { fetchUserProfile } from "../store";
 
 const ProductEditPage = () => {
   const { id } = useParams();

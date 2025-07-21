@@ -9,7 +9,9 @@
   },
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch --env-file=.env server.js"
+    "dev": "node --watch --env-file=.env server.js",
+    "dev-simple": "node --watch --env-file=.env server-simple.js",
+    "start-simple": "node server-simple.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",

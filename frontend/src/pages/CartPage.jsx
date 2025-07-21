@@ -1,7 +1,7 @@
 import Cart from "../components/Cart";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { fetchUserProfile } from "../store/authSlice";
+import { fetchUserProfile } from "../store";
 
 const CartPage = () => {
   const dispatch = useDispatch();

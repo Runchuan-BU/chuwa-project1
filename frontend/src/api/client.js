@@ -1,11 +1,9 @@
-//AXIOS
+// Axios API client configuration
 import axios from 'axios';
 
 const client = axios.create({
   baseURL: '/api',
-  withCredentials: true, // for cookie-based auth
+  withCredentials: true, // Enable cookie-based authentication
 });
 
 export default client;
-
-//need update

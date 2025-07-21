@@ -1,47 +1,82 @@
 import { useState } from 'react';
-import client from '../api/client';
 
 export default function ChangePasswordForm() {
-  const [oldPassword, setOldPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [formData, setFormData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
 
-  const handleSubmit = async (e) => {
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      await client.post('/auth/change-password', {
-        oldPassword,
-        newPassword,
-      });
-      alert('Password updated successfully');
-      setOldPassword('');
-      setNewPassword('');
-    } catch (err) {
-      alert('Failed to change password');
-    }
+    // Handle password change logic here
+    console.log('Password change submitted:', formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-sm mx-auto mt-10 p-4 bg-white rounded shadow">
-      <h2 className="text-xl font-bold mb-4">Change Password</h2>
-      <input
-        type="password"
-        value={oldPassword}
-        onChange={(e) => setOldPassword(e.target.value)}
-        placeholder="Current Password"
-        className="w-full p-2 mb-3 border rounded"
-        required
-      />
-      <input
-        type="password"
-        value={newPassword}
-        onChange={(e) => setNewPassword(e.target.value)}
-        placeholder="New Password"
-        className="w-full p-2 mb-4 border rounded"
-        required
-      />
-      <button type="submit" className="w-full bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600">
-        Update Password
-      </button>
-    </form>
+    <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
+      <h3 className="text-lg font-semibold mb-4">Change Password</h3>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            Current Password
+          </label>
+          <input
+            type="password"
+            id="currentPassword"
+            name="currentPassword"
+            value={formData.currentPassword}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            New Password
+          </label>
+          <input
+            type="password"
+            id="newPassword"
+            name="newPassword"
+            value={formData.newPassword}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        
+        <div>
+          <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            Confirm New Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+        
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+        >
+          Change Password
+        </button>
+      </form>
+    </div>
   );
 }
