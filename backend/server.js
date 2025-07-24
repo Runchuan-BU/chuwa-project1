@@ -5,11 +5,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-<<<<<<< Updated upstream
-=======
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
->>>>>>> Stashed changes
 
 import authRoutes from './src/route/authRoutes.js';
 import productRoutes from './src/route/productRoutes.js';
@@ -66,16 +63,6 @@ app.get('/api', (req, res) => {
         add: 'POST /api/cart',
         update: 'PUT /api/cart',
         remove: 'DELETE /api/cart/:productId'
-<<<<<<< Updated upstream
-      }
-    },
-    sampleData: {
-      adminUser: { email: 'admin@example.com', password: 'password123' },
-      regularUser: { email: 'user@example.com', password: 'password123' },
-      note: 'Sample users will be created automatically on first startup'
-    }
-  });
-=======
       }
     },
     sampleData: {
@@ -161,7 +148,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
 // Redirect root to API docs
 app.get('/', (req, res) => {
   res.redirect('/api-docs');
->>>>>>> Stashed changes
 });
 
 // Routes
@@ -207,11 +193,7 @@ app.use((err, req, res, next) => {
 // MongoDB Connection
 const connectDB = async () => {
   try {
-<<<<<<< Updated upstream
-    await mongoose.connect(process.env.MONGODB_URI);
-=======
     await mongoose.connect(process.env.MONGO_URI);
->>>>>>> Stashed changes
     console.log('✅ MongoDB Connected');
     
     // Create sample data if database is empty
@@ -223,10 +205,6 @@ const connectDB = async () => {
   }
 };
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 // Create sample data
 const createSampleData = async () => {
   try {
@@ -314,20 +292,14 @@ const createSampleData = async () => {
   }
 };
 
-<<<<<<< Updated upstream
-=======
 
 
 
->>>>>>> Stashed changes
 // Start server
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
-<<<<<<< Updated upstream
-=======
     console.log(`📚 API documentation: http://localhost:${PORT}/api-docs`);
->>>>>>> Stashed changes
     console.log(`📚 API documentation: http://localhost:${PORT}/api`);
     console.log(`💚 Health check: http://localhost:${PORT}/api/health`);
     console.log(`🗄️ Database: MongoDB`);

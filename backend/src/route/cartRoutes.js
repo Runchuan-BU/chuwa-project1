@@ -6,14 +6,6 @@ import {
   removeCartItem,
 } from '../controllers/cartController.js';
 import auth from '../middleware/auth.js';
-<<<<<<< Updated upstream
-
-const router = express.Router();
-
-router.get('/', auth, getCart);
-router.post('/', auth, addToCart);
-router.put('/', auth, updateCartItem);
-=======
 
 const router = express.Router();
 /**
@@ -368,7 +360,6 @@ router.put('/', auth, updateCartItem);
  *                 message:
  *                   type: string
  */
->>>>>>> Stashed changes
 router.delete('/:productId', auth, removeCartItem);
 
 export default router;

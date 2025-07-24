@@ -4,11 +4,6 @@ import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
-<<<<<<< Updated upstream
-router.post('/signup', signup);
-router.post('/signin', signin);
-router.patch('/update-password', auth, updatePassword);
-=======
 /**
  * @swagger
  * components:
@@ -347,7 +342,6 @@ router.patch('/update-password', auth, updatePassword);
  *             schema:
  *               $ref: '#/components/schemas/Error'
  */
->>>>>>> Stashed changes
 router.get('/profile', auth, getProfile);
 
 export default router;
