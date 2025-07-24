@@ -1,0 +1,65 @@
+/* Home Page Styles */
+
+/* Page Container */
+.home-page-container {
+  @apply min-h-screen bg-gray-50;
+}
+
+/* Hero Section */
+.hero-section {
+  @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white;
+}
+
+.hero-container {
+  @apply max-w-7xl mx-auto px-4 py-12;
+}
+
+.hero-title {
+  @apply text-4xl font-bold mb-4;
+}
+
+.hero-description {
+  @apply text-xl mb-6;
+}
+
+.hero-buttons {
+  @apply flex space-x-4;
+}
+
+.hero-button-primary {
+  @apply bg-white text-blue-600 px-6 py-2 rounded-md hover:bg-gray-100 transition-colors;
+}
+
+.hero-button-outline {
+  @apply border border-white text-white px-6 py-2 rounded-md hover:bg-white hover:text-blue-600 transition-colors;
+}
+
+/* Products Section */
+.products-main {
+  @apply p-6;
+}
+
+.products-container {
+  @apply max-w-7xl mx-auto;
+}
+
+.products-title {
+  @apply text-2xl font-bold text-gray-900 mb-6;
+}
+
+/* Footer */
+.footer-section {
+  @apply bg-gray-800 text-white mt-12;
+}
+
+.footer-container {
+  @apply max-w-7xl mx-auto px-4 py-8;
+}
+
+.footer-content {
+  @apply text-center;
+}
+
+.footer-secondary-text {
+  @apply text-gray-400 mt-2;
+} 

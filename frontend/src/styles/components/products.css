@@ -1,0 +1,241 @@
+/* Product Card Styles - Fixed Layout */
+.product-card {
+  @apply bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow h-full flex flex-col min-h-[420px];
+}
+
+.product-image-container {
+  @apply p-4;
+}
+
+.product-image {
+  @apply w-full h-44 object-contain rounded-md bg-gray-50;
+}
+
+.product-card-content {
+  @apply p-4 pt-2 flex-1 flex flex-col;
+}
+
+.product-title {
+  @apply font-semibold text-lg text-gray-900 mb-3 hover:text-blue-600 transition-colors;
+}
+
+.product-description {
+  @apply text-gray-600 text-sm mb-4 flex-1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-price-section {
+  @apply flex items-center justify-between mb-4;
+}
+
+.product-price {
+  @apply text-xl font-bold text-green-600;
+}
+
+.product-stock {
+  @apply text-sm text-gray-500;
+}
+
+.product-actions {
+  @apply space-y-2 mt-auto;
+}
+
+/* Product Grid Layout */
+.grid-products {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+}
+
+/* Admin Controls */
+.admin-controls {
+  @apply flex space-x-2;
+}
+
+.edit-btn {
+  @apply bg-yellow-500 text-white px-3 py-1 rounded text-sm hover:bg-yellow-600 transition-colors flex-1 text-center;
+}
+
+/* Quantity Controls */
+.quantity-btn {
+  @apply bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded transition-colors font-medium min-w-[40px] h-10 flex items-center justify-center;
+}
+
+.quantity-display {
+  @apply px-4 py-2 bg-gray-100 rounded font-medium min-w-[60px] h-10 flex items-center justify-center;
+}
+
+/* Pagination */
+.pagination {
+  @apply flex justify-center items-center space-x-2 mt-8;
+}
+
+.pagination-btn {
+  @apply px-3 py-2 border rounded-md transition-colors;
+}
+
+.pagination-btn-active {
+  @apply bg-blue-600 text-white border-blue-600;
+}
+
+.pagination-btn-inactive {
+  @apply bg-white text-gray-700 border-gray-300 hover:bg-gray-50;
+}
+
+/* Product Detail Page Styles */
+.product-detail-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-8;
+}
+
+.product-detail-image {
+  @apply w-full h-96 object-contain rounded-lg shadow-md p-4 bg-gray-50;
+}
+
+.product-detail-price {
+  @apply text-3xl font-bold text-green-600;
+}
+
+.product-detail-price-container {
+  @apply mb-6;
+}
+
+.product-detail-description {
+  @apply text-gray-700 leading-relaxed;
+}
+
+.product-detail-meta {
+  @apply mb-6;
+}
+
+.product-detail-meta-text {
+  @apply text-gray-600;
+}
+
+.product-detail-meta-label {
+  @apply font-semibold;
+}
+
+.product-detail-quantity-section {
+  @apply mb-6;
+}
+
+.product-detail-quantity-controls {
+  @apply flex items-center gap-3;
+}
+
+.product-detail-button-section {
+  @apply mb-6;
+}
+
+.product-detail-back-btn {
+  @apply flex items-center gap-2 text-blue-600 hover:text-blue-800 transition-colors font-medium;
+}
+
+.product-edit-btn {
+  @apply text-blue-600 hover:text-blue-800 transition-colors font-medium px-3 py-1 text-sm flex-1 text-center;
+}
+
+.product-delete-btn {
+  @apply text-red-600 hover:text-red-800 transition-colors font-medium px-3 py-1 text-sm flex-1 text-center;
+}
+
+.product-detail-add-to-cart {
+  @apply bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors w-full text-lg;
+}
+
+.product-detail-out-of-stock {
+  @apply bg-gray-500 text-white px-4 py-3 rounded-lg hover:bg-gray-600 transition-colors w-full text-lg opacity-50 cursor-not-allowed;
+}
+
+.product-detail-features-list {
+  @apply space-y-2 text-gray-700;
+}
+
+.product-detail-feature-item {
+  @apply flex items-center;
+}
+
+.product-detail-feature-bullet {
+  @apply w-2 h-2 bg-blue-600 rounded-full mr-3;
+}
+
+/* Product Detail Loading States */
+.product-detail-loading {
+  @apply animate-pulse;
+}
+
+.product-detail-skeleton-image {
+  @apply h-96 bg-gray-300 rounded-lg mb-6;
+}
+
+.product-detail-skeleton-title {
+  @apply h-8 bg-gray-300 rounded mb-4;
+}
+
+.product-detail-skeleton-text {
+  @apply h-6 bg-gray-300 rounded mb-2;
+}
+
+/* Product Detail Error States */
+.product-detail-not-found-title {
+  @apply text-2xl font-bold text-gray-900 mb-6;
+}
+
+.product-detail-not-found-text {
+  @apply text-gray-600;
+}
+
+/* Product Form Styles */
+.product-form-header {
+  @apply flex items-center justify-between mb-6;
+}
+
+.product-form-access-denied {
+  @apply max-w-md mx-auto bg-white rounded-lg shadow-md p-6 text-center;
+}
+
+.product-form-error-title {
+  @apply text-2xl font-bold text-red-600 mb-6;
+}
+
+.product-form-error-message {
+  @apply text-gray-600 mb-4;
+}
+
+.product-form-user-info {
+  @apply text-gray-500 text-sm mb-6;
+}
+
+.product-form {
+  @apply space-y-6;
+}
+
+.product-form-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.product-form-image-preview {
+  @apply w-32 h-32 object-cover rounded-md border;
+}
+
+.product-form-actions {
+  @apply flex space-x-4;
+}
+
+.product-form-submit {
+  @apply bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed flex-1;
+}
+
+.product-form-cancel {
+  @apply border border-blue-600 text-blue-600 px-6 py-2 rounded-md hover:bg-blue-50 transition-colors;
+}
+
+/* Product Form Alert Messages */
+.product-form-error-alert {
+  @apply mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded flex-shrink-0;
+}
+
+.product-form-success-alert {
+  @apply mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded flex-shrink-0;
+} 

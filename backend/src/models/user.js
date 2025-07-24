@@ -1,19 +1,7 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import bcrypt from 'bcryptjs'; // encrypt password 
-import { use } from 'react';
+import bcrypt from 'bcryptjs';
 
-// //to load environment variables from .env
-// dotenv.config();
-
-// const uri = process.env.MONGO_URI;
-// //add to server
-// mongoose.connect(uri)
-//     .then(() => console.log('✅ Connected to MongoDB Atlas'))
-//     .catch(err => console.error('❌ Connection error:', err));
-
-const userSchema = new mongoose.Schema(
-    {
+const userSchema = new mongoose.Schema({
         username: {
             type: String,
             required: [true, 'Username is required'],
@@ -27,25 +15,24 @@ const userSchema = new mongoose.Schema(
             required: [true, 'Email is required'],
             unique: true,
             trim: true,
-            //validation rule that mongoose would validate the email format
-            //any non-whitespace character  \. matches a literal dot 
-            match: [/\S+@\S+\.\S+/, 'Invalid email address'],
+    lowercase: true,
+    match: [/\S+@\S+\.\S+/, 'Invalid email address']
         },
         password: {
             type: String,
             required: [true, 'Password is required'],
-            minlength: [6, 'Password must be at least 6 characters'],
+    minlength: [6, 'Password must be at least 6 characters']
         },
         role: {
             type: String,
             enum: ['user', 'admin'],
-            default: 'user',
+    default: 'user'
         }
-    },
-    { timestamps: true } //keep track of created and updated time
+}, { 
+  timestamps: true 
+});
 
-);
-                                      //next para:call next to complete the operation
+// Hash password before saving
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
         return next();
@@ -54,17 +41,74 @@ userSchema.pre('save', async function (next) {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
         next();
-    }catch (error) {
-        next(error);// Pass error to mongoose to log out
-    }
-    
+  } catch (error) {
+    next(error);
+  }
 });
 
-userSchema.methods.comparePassword = async function (inputPassword) {
-    return await bcrypt.compare(inputPassword,this.password);
-                                               //point to current user
+// Compare password method
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
 };
-          //create mongo model and use schema structure
-const User = mongoose.model(User,userSchema);
+
+// Update password method
+userSchema.methods.updatePassword = async function (currentPassword, newPassword) {
+  // Verify current password
+  const isCurrentPasswordValid = await this.comparePassword(currentPassword);
+  if (!isCurrentPasswordValid) {
+    throw new Error('Current password is incorrect');
+  }
+  
+  // Set new password (will be hashed by pre-save hook)
+  this.password = newPassword;
+  await this.save();
+  return this;
+};
+
+// Get public profile (exclude password)
+userSchema.methods.getPublicProfile = function() {
+  return {
+    id: this._id,
+    username: this.username,
+    email: this.email,
+    role: this.role,
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt
+  };
+};
+
+// Static method to find by email
+userSchema.statics.findByEmail = function(email) {
+  return this.findOne({ email: email.toLowerCase() });
+};
+
+// Static method to check if email exists
+userSchema.statics.emailExists = async function(email, excludeId = null) {
+  const query = { email: email.toLowerCase() };
+  if (excludeId) {
+    query._id = { $ne: excludeId };
+  }
+  const user = await this.findOne(query);
+  return !!user;
+};
+
+// Static method to check if username exists
+userSchema.statics.usernameExists = async function(username, excludeId = null) {
+  const query = { username };
+  if (excludeId) {
+    query._id = { $ne: excludeId };
+  }
+  const user = await this.findOne(query);
+  return !!user;
+};
+
+// Transform toJSON to exclude password
+userSchema.methods.toJSON = function() {
+  const user = this.toObject();
+  delete user.password;
+  return user;
+};
+
+const User = mongoose.model('User', userSchema);
 
 export default User;

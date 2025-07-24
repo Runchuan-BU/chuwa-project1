@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { addProduct, updateProduct } from '../store';
 import client from '../api/client';
 
@@ -14,7 +15,48 @@ export default function ProductForm({ productId }) {
   });
   const [loading, setLoading] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
+
+  // Check authentication and admin role
+  if (!isAuthenticated) {
+    return (
+      <div className="product-form-access-denied">
+        <h2 className="product-form-error-title">Authentication Required</h2>
+        <p className="product-form-error-message">Please sign in to access this page.</p>
+        <button 
+          onClick={() => navigate('/auth')}
+          className="btn-primary"
+        >
+          Sign In
+        </button>
+      </div>
+    );
+  }
+
+  if (user?.role !== 'admin') {
+    return (
+      <div className="product-form-access-denied">
+        <h2 className="product-form-error-title">Admin Access Required</h2>
+        <p className="product-form-error-message">
+          Only administrators can create or edit products.
+        </p>
+        <p className="product-form-user-info">
+          Current user: <strong>{user?.email}</strong> ({user?.role})
+        </p>
+        <button 
+          onClick={() => navigate('/')}
+          className="btn-primary"
+        >
+          Back to Home
+        </button>
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (productId) {
@@ -35,6 +77,7 @@ export default function ProductForm({ productId }) {
           }
         } catch (error) {
           console.error('Error fetching product:', error);
+          setError('Failed to load product data');
         }
       };
       fetchProduct();
@@ -46,11 +89,15 @@ export default function ProductForm({ productId }) {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
+    setSuccess('');
 
     try {
       const productData = {
@@ -63,41 +110,69 @@ export default function ProductForm({ productId }) {
         const response = await client.put(`/products/${productId}`, productData);
         if (response.data.success) {
           dispatch(updateProduct({ id: productId, ...productData }));
+          setSuccess('Product updated successfully!');
         }
       } else {
         const response = await client.post('/products', productData);
         if (response.data.success) {
           dispatch(addProduct(response.data.product));
-        }
-      }
+          setSuccess('Product created successfully!');
+          
+          // Reset form for new product
+          setFormData({
+            name: '',
+            description: '',
+            price: '',
+            image: '',
+            category: 'Electronics',
+            stock: '',
+          });
 
-      // Reset form for new products
-      if (!isEdit) {
-        setFormData({
-          name: '',
-          description: '',
-          price: '',
-          image: '',
-          category: 'Electronics',
-          stock: '',
-        });
+          // Navigate to home after successful creation
+          setTimeout(() => {
+            navigate('/');
+          }, 1000);
+        }
       }
     } catch (error) {
       console.error('Error saving product:', error);
+      const errorMessage = error.response?.data?.message || 'Failed to save product';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold mb-6">
-        {isEdit ? 'Edit Product' : 'Add New Product'}
-      </h2>
+    <div className="card-primary">
+      <div className="product-form-header">
+        <h2 className="title-primary">
+          {isEdit ? 'Edit Product' : 'Add New Product'}
+        </h2>
+        <button 
+          type="button"
+          onClick={() => navigate('/')}
+          className="btn-outline"
+        >
+          ← Back to Home
+        </button>
+      </div>
       
-      <form onSubmit={handleSubmit} className="space-y-6">
+      {error && (
+        <div className="product-form-error-alert">
+          {error}
+        </div>
+      )}
+      
+      {success && (
+        <div className="product-form-success-alert">
+          {success}
+        </div>
+      )}
+      
+      <form onSubmit={handleSubmit} className="product-form">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="name" className="label-primary">
             Product Name *
           </label>
           <input
@@ -106,13 +181,14 @@ export default function ProductForm({ productId }) {
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter product name"
+            className="input-primary"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="description" className="label-primary">
             Description *
           </label>
           <textarea
@@ -120,16 +196,17 @@ export default function ProductForm({ productId }) {
             name="description"
             value={formData.description}
             onChange={handleChange}
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Enter product description"
+            rows="4"
+            className="input-primary"
             required
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="product-form-grid">
           <div>
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-              Price * ($)
+            <label htmlFor="price" className="label-primary">
+              Price ($) *
             </label>
             <input
               type="number"
@@ -137,16 +214,17 @@ export default function ProductForm({ productId }) {
               name="price"
               value={formData.price}
               onChange={handleChange}
+              placeholder="0.00"
               step="0.01"
               min="0"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-primary"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="stock" className="block text-sm font-medium text-gray-700 mb-1">
-              Stock *
+            <label htmlFor="stock" className="label-primary">
+              Stock Quantity *
             </label>
             <input
               type="number"
@@ -154,36 +232,37 @@ export default function ProductForm({ productId }) {
               name="stock"
               value={formData.stock}
               onChange={handleChange}
+              placeholder="0"
               min="0"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-primary"
               required
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
-            Category *
+          <label htmlFor="category" className="label-primary">
+            Category
           </label>
           <select
             id="category"
             name="category"
             value={formData.category}
             onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
+            className="input-primary"
           >
             <option value="Electronics">Electronics</option>
             <option value="Clothing">Clothing</option>
             <option value="Books">Books</option>
             <option value="Home">Home & Garden</option>
             <option value="Sports">Sports</option>
-            <option value="Beauty">Beauty</option>
+            <option value="Toys">Toys</option>
+            <option value="Other">Other</option>
           </select>
         </div>
 
         <div>
-          <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="image" className="label-primary">
             Image URL *
           </label>
           <input
@@ -193,20 +272,20 @@ export default function ProductForm({ productId }) {
             value={formData.image}
             onChange={handleChange}
             placeholder="https://example.com/image.jpg"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-primary"
             required
           />
         </div>
 
         {formData.image && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="label-primary">
               Image Preview
             </label>
             <img
               src={formData.image}
               alt="Product preview"
-              className="w-32 h-32 object-cover rounded-md border"
+              className="product-form-image-preview"
               onError={(e) => {
                 e.target.style.display = 'none';
               }}
@@ -214,21 +293,21 @@ export default function ProductForm({ productId }) {
           </div>
         )}
 
-        <div className="flex space-x-4">
+        <div className="product-form-actions">
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-blue-400"
+            className="product-form-submit"
           >
             {loading ? 'Saving...' : (isEdit ? 'Update Product' : 'Add Product')}
           </button>
           
           <button
             type="button"
-            onClick={() => window.history.back()}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+            onClick={() => navigate('/')}
+            className="product-form-cancel"
           >
-            Cancel
+            Cancel & Return
           </button>
         </div>
       </form>

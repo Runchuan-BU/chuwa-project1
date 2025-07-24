@@ -1,0 +1,28 @@
+/* Header Navigation Styles */
+.header-nav {
+  @apply bg-white shadow-md sticky top-0 z-50;
+}
+
+.header-container {
+  @apply max-w-7xl mx-auto px-4;
+}
+
+.header-content {
+  @apply flex items-center justify-between h-16;
+}
+
+.header-logo {
+  @apply text-xl font-bold text-blue-600 hover:text-blue-700 transition-colors;
+}
+
+.header-links {
+  @apply flex items-center space-x-6;
+}
+
+.nav-link {
+  @apply text-gray-600 hover:text-blue-600 transition-colors relative;
+}
+
+.cart-badge {
+  @apply absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center;
+} 

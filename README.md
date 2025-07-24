@@ -1,68 +1,64 @@
-# Chuwa Project 1
+# E-commerce Application
 
-A Node.js web application built with Express.js
+A modern full-stack e-commerce application built with React, Node.js, Express, and MongoDB.
 
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
+- Node.js 18+
+- Docker Desktop (for MongoDB)
 
-- Node.js (version 14 or higher)
-- npm (Node Package Manager)
+### 1. Install Dependencies
+```bash
+npm run install:all
+```
 
-### Installation
+### 2. Start MongoDB
+```bash
+docker run -d --name ecommerce-mongo -p 27017:27017 mongo:latest
+```
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Running the Application
-
-#### Development Mode
+### 3. Start Development Servers
 ```bash
 npm run dev
 ```
-This will start the server with nodemon for automatic restarting on file changes.
 
-#### Production Mode
+This will start:
+- **Backend API**: http://localhost:5001
+- **Frontend**: http://localhost:3000
+- **MongoDB**: localhost:27017
+
+## 📱 Demo Accounts
+
+The system automatically creates sample users:
+
+- **Admin**: `admin@example.com` / `password123`
+- **User**: `user@example.com` / `password123`
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React, Redux Toolkit, Tailwind CSS
+- **Backend**: Node.js, Express.js, Mongoose
+- **Database**: MongoDB
+- **Authentication**: JWT
+
+## 📋 Features
+
+- User authentication (signup/signin)
+- Product management (admin only)
+- Shopping cart with persistence
+- Product search and pagination
+- Responsive design
+- Role-based access control
+
+## 🧹 Cleanup
+
+Stop and remove MongoDB container:
 ```bash
-npm start
+docker stop ecommerce-mongo
+docker rm ecommerce-mongo
 ```
 
-The server will start on port 3000 by default, or on the port specified in the PORT environment variable.
+## 📚 API Documentation
 
-### API Endpoints
-
-- `GET /` - Welcome message
-- `GET /api/health` - Health check endpoint
-
-### Project Structure
-
-```
-chuwa_project1/
-├── index.js          # Main application file
-├── package.json      # Project dependencies and scripts
-├── .gitignore        # Git ignore rules
-├── README.md         # Project documentation
-├── routes/           # API routes (to be created)
-├── middleware/       # Custom middleware (to be created)
-├── controllers/      # Route controllers (to be created)
-├── models/           # Data models (to be created)
-├── config/           # Configuration files (to be created)
-├── utils/            # Utility functions (to be created)
-└── public/           # Static files (to be created)
-```
-
-### Environment Variables
-
-Create a `.env` file in the root directory to configure environment variables:
-
-```
-PORT=3000
-NODE_ENV=development
-```
-
-### License
-
-ISC 
+Visit http://localhost:5001/api for API documentation and health check. 
