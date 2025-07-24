@@ -92,7 +92,7 @@ const router = express.Router();
  *     summary: Get user's cart
  *     tags: [Cart]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Cart retrieved successfully
@@ -109,7 +109,7 @@ router.get('/', protect, getCart);
  *     summary: Add item to cart
  *     tags: [Cart]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -132,12 +132,12 @@ router.post('/', protect, addToCart);
  *     summary: Update cart item quantity
  *     tags: [Cart]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
- *           schema:
+ *       application/json:
+ *          schema:
  *             $ref: '#/components/schemas/AddToCartRequest'
  *     responses:
  *       200:
@@ -154,13 +154,9 @@ router.put('/', protect, updateCartItem);
  *     summary: Remove item from cart
  *     tags: [Cart]
  *     security:
- *       - cookieAuth: []
- *     parameters:
- *       - in: path
- *         name: productId
- *         required: true
- *         schema:
- *           type: string
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
  *     responses:
  *       200:
  *         description: Item removed successfully
@@ -175,7 +171,9 @@ router.delete('/:productId', protect, removeCartItem);
  *     summary: Clear entire cart
  *     tags: [Cart]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
  *     responses:
  *       200:
  *         description: Cart cleared successfully
@@ -192,7 +190,7 @@ router.delete('/clear', protect, clearCart);
  *     summary: Apply promo code to cart
  *     tags: [Cart]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -215,7 +213,9 @@ router.post('/promo', protect, applyPromoCode);
  *     summary: Remove promo code from cart
  *     tags: [Cart]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
  *     responses:
  *       200:
  *         description: Promo code removed successfully

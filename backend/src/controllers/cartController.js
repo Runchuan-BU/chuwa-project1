@@ -7,7 +7,7 @@ export const getCart = async (req, res) => {
  
   try {
      const user = req.user._id || req.user.id;
-    const cart = await Cart.findOne({ user: user }).populate('items.product');
+    let cart = await Cart.findOne({ user: user }).populate('items.product');
     if (!cart) {
     cart = new Cart({ 
       user: user, 
@@ -90,7 +90,7 @@ export const updateCartItem = async (req, res) => {
 export const removeCartItem = async (req, res) => {
   try {
     const { productId } = req.body;
-     const user = req.user._id || req.user.id;
+    const user = req.user._id || req.user.id;
     const cart = await Cart.findOne({ user: user });
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
                                                    //filter out the id not the request sent

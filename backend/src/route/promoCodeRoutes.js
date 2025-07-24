@@ -1,4 +1,4 @@
-// routes/promoCodeRoutes.js
+
 import express from 'express';
 import {
   createPromoCode,
@@ -136,7 +136,7 @@ router.get('/validate/:code', validatePromoCode);
  *     description: Create a new promo code (Admin only)
  *     tags: [Promo Codes]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -165,7 +165,7 @@ router.post('/', protect, isAdmin, createPromoCode);
  *     description: Retrieve all promo codes (Admin only)
  *     tags: [Promo Codes]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: active
@@ -198,7 +198,7 @@ router.get('/', protect, isAdmin, getAllPromoCodes);
  *     description: Get details of a specific promo code (Admin only)
  *     tags: [Promo Codes]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: code
@@ -225,7 +225,7 @@ router.get('/:code', protect, isAdmin, getPromoCode);
  *     description: Update an existing promo code (Admin only)
  *     tags: [Promo Codes]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: code
@@ -254,7 +254,7 @@ router.put('/:code', protect, isAdmin, updatePromoCode);
  *     description: Delete a promo code (Admin only)
  *     tags: [Promo Codes]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: code

@@ -2,7 +2,6 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
@@ -12,6 +11,7 @@ import swaggerJsdoc from "swagger-jsdoc";
 import authRoutes from './src/route/authRoutes.js';
 import productRoutes from './src/route/productRoutes.js';
 import cartRoutes from './src/route/cartRoutes.js';
+import promoCodeRoutes from './src/route/promoCodeRoutes.js';
 
 dotenv.config();
 
@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
-app.use(cookieParser());
+
 
 // Serve static files from frontend build
 app.use(express.static(join(__dirname, '../frontend/dist')));
@@ -39,6 +39,16 @@ const swaggerOptions = {
       description: "API documentation for Auth & Product Management",
     },
     servers: [{ url: `http://localhost:${PORT}` }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'JWT authorization header using the Bearer scheme. Example: "Bearer {token}"'
+        }
+      }
+    },
   },
   apis: ["./src/route/*.js"], // path to your annotations
 };
@@ -50,6 +60,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/promo-codes', promoCodeRoutes);
 
 // Fallback route for SPA
 app.get('*', (req, res) => {

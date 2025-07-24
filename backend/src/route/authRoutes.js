@@ -219,7 +219,7 @@ router.post('/logout', logout);
  *     description: Update the current user's password (requires authentication)
  *     tags: [Authentication]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:

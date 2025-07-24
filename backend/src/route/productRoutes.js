@@ -243,7 +243,7 @@ router.get('/:id', getProductById);
  *     description: Create a new product (requires authentication)
  *     tags: [Products]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -279,7 +279,7 @@ router.post('/', protect, isAdmin, createProduct);
  *     description: Update a product (only admin or product creator can update)
  *     tags: [Products]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -335,7 +335,7 @@ router.put('/:id', protect, isAdmin, updateProduct);
  *     description: Delete a product (only admin or product creator can delete)
  *     tags: [Products]
  *     security:
- *       - cookieAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
