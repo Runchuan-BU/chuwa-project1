@@ -5,6 +5,11 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+<<<<<<< Updated upstream
+=======
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+>>>>>>> Stashed changes
 
 import authRoutes from './src/route/authRoutes.js';
 import productRoutes from './src/route/productRoutes.js';
@@ -61,6 +66,7 @@ app.get('/api', (req, res) => {
         add: 'POST /api/cart',
         update: 'PUT /api/cart',
         remove: 'DELETE /api/cart/:productId'
+<<<<<<< Updated upstream
       }
     },
     sampleData: {
@@ -69,6 +75,93 @@ app.get('/api', (req, res) => {
       note: 'Sample users will be created automatically on first startup'
     }
   });
+=======
+      }
+    },
+    sampleData: {
+      adminUser: { email: 'admin@example.com', password: 'password123' },
+      regularUser: { email: 'user@example.com', password: 'password123' },
+      note: 'Sample users will be created automatically on first startup'
+    }
+  });
+});
+
+// Swagger configuration
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'E-commerce API',
+      version: '1.0.0',
+      description: 'A comprehensive E-commerce API with authentication, product management, and shopping cart functionality',
+      contact: {
+        name: 'API Support',
+        email: 'support@example.com'
+      }
+    },
+    servers: [
+      {
+        url: `http://localhost:${PORT}`,
+        description: 'Development server'
+      },
+      {
+        url: 'https://api.example.com',
+        description: 'Production server'
+      }
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'JWT authorization header using the Bearer scheme. Example: "Bearer {token}"'
+        },
+        cookieAuth: {
+          type: 'apiKey',
+          in: 'cookie',
+          name: 'token',
+          description: 'JWT token stored in HTTP-only cookie'
+        }
+      },
+      schemas: {
+        Error: {
+          type: 'object',
+          properties: {
+            success: {
+              type: 'boolean',
+              example: false
+            },
+            message: {
+              type: 'string',
+              example: 'Error message'
+            },
+            errors: {
+              type: 'array',
+              items: {
+                type: 'string'
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  apis: ['./src/route/*.js', './src/models/*.js'], // Path to the API routes
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+
+// Swagger UI setup
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: "E-commerce API Documentation",
+  customCss: '.swagger-ui .topbar { display: none }',
+}));
+
+// Redirect root to API docs
+app.get('/', (req, res) => {
+  res.redirect('/api-docs');
+>>>>>>> Stashed changes
 });
 
 // Routes
@@ -114,7 +207,11 @@ app.use((err, req, res, next) => {
 // MongoDB Connection
 const connectDB = async () => {
   try {
+<<<<<<< Updated upstream
     await mongoose.connect(process.env.MONGODB_URI);
+=======
+    await mongoose.connect(process.env.MONGO_URI);
+>>>>>>> Stashed changes
     console.log('✅ MongoDB Connected');
     
     // Create sample data if database is empty
@@ -126,6 +223,10 @@ const connectDB = async () => {
   }
 };
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 // Create sample data
 const createSampleData = async () => {
   try {
@@ -213,10 +314,20 @@ const createSampleData = async () => {
   }
 };
 
+<<<<<<< Updated upstream
+=======
+
+
+
+>>>>>>> Stashed changes
 // Start server
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
+<<<<<<< Updated upstream
+=======
+    console.log(`📚 API documentation: http://localhost:${PORT}/api-docs`);
+>>>>>>> Stashed changes
     console.log(`📚 API documentation: http://localhost:${PORT}/api`);
     console.log(`💚 Health check: http://localhost:${PORT}/api/health`);
     console.log(`🗄️ Database: MongoDB`);

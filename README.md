@@ -24,7 +24,11 @@ npm run dev
 ```
 
 This will start:
+<<<<<<< Updated upstream
 - **Backend API**: http://localhost:5001
+=======
+- **Backend API**: http://localhost:3001
+>>>>>>> Stashed changes
 - **Frontend**: http://localhost:3000
 - **MongoDB**: localhost:27017
 
