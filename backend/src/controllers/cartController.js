@@ -7,6 +7,15 @@ export const getCart = async (req, res) => {
     const cart = await Cart.findOne({ user: req.user.id }).populate('items.product');
     if (!cart) return res.json({ items: [], total: 0 });
 
+    // Filter out items where product no longer exists (was deleted)
+    cart.items = cart.items.filter(item => item.product !== null);
+    
+    // Recalculate total after filtering
+    cart.total = cart.items.reduce((acc, item) => acc + item.quantity * item.product.price, 0);
+    
+    // Save the cleaned cart
+    await cart.save();
+
     res.json(cart);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -34,11 +43,11 @@ export const addToCart = async (req, res) => {
       cart.items.push({ product: productId, quantity });
     }
 
-    // 計算 total
-    cart.total = cart.items.reduce((acc, item) => acc + item.quantity * product.price, 0);
+    // Populate products and calculate total
+    await cart.populate('items.product');
+    cart.total = cart.items.reduce((acc, item) => acc + item.quantity * item.product.price, 0);
 
     await cart.save();
-    await cart.populate('items.product');
 
     res.json(cart);
   } catch (err) {
@@ -51,16 +60,29 @@ export const updateCartItem = async (req, res) => {
     const { productId, quantity } = req.body;
     if (quantity < 1) return res.status(400).json({ message: 'Quantity must be at least 1' });
 
-    const cart = await Cart.findOne({ user: req.user.id });
+    // First populate the cart to get full product data
+    const cart = await Cart.findOne({ user: req.user.id }).populate('items.product');
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
 
-    const itemIndex = cart.items.findIndex(item => item.product.toString() === productId);
-    if (itemIndex === -1) return res.status(404).json({ message: 'Product not in cart' });
+    // Filter out any null products first (products that were deleted)
+    cart.items = cart.items.filter(item => item.product !== null);
 
+    // Find the item by comparing with the populated product._id (also works with product.id)
+    const itemIndex = cart.items.findIndex(item => 
+      item.product._id.toString() === productId || item.product.id === productId
+    );
+    
+    if (itemIndex === -1) {
+      // Save the cleaned cart and return error
+      cart.total = cart.items.reduce((acc, item) => acc + item.quantity * item.product.price, 0);
+      await cart.save();
+      return res.status(404).json({ message: 'Product not found in cart. Cart has been refreshed.' });
+    }
+
+    // Update the quantity
     cart.items[itemIndex].quantity = quantity;
 
-    // 重新計算 total
-    await cart.populate('items.product');
+    // Recalculate total
     cart.total = cart.items.reduce((acc, item) => acc + item.quantity * item.product.price, 0);
 
     await cart.save();
@@ -73,15 +95,21 @@ export const updateCartItem = async (req, res) => {
 
 export const removeCartItem = async (req, res) => {
   try {
-    const { productId } = req.body;
+    const { productId } = req.params;
 
-    const cart = await Cart.findOne({ user: req.user.id });
+    // First populate the cart to get full product data
+    const cart = await Cart.findOne({ user: req.user.id }).populate('items.product');
     if (!cart) return res.status(404).json({ message: 'Cart not found' });
 
-    cart.items = cart.items.filter(item => item.product.toString() !== productId);
+    // Filter out any null products first (products that were deleted)
+    cart.items = cart.items.filter(item => item.product !== null);
 
-    // 重新計算 total
-    await cart.populate('items.product');
+    // Remove the specific product by comparing with populated product._id (also works with product.id)
+    cart.items = cart.items.filter(item => 
+      item.product._id.toString() !== productId && item.product.id !== productId
+    );
+
+    // Recalculate total
     cart.total = cart.items.reduce((acc, item) => acc + item.quantity * item.product.price, 0);
 
     await cart.save();

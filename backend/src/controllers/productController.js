@@ -1,86 +1,214 @@
 
 import Product from '../models/product.js';
 
-export const createProduct = async (req, res) => {
-  try {
-    const { title, description, price, imageUrl } = req.body;
-    const createdBy = req.user.id;
-
-    const product = new Product({ title, description, price, imageUrl, createdBy });
-    await product.save();
-
-    res.status(201).json(product);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
+// Get all products with pagination and search
 export const listProducts = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search = '' } = req.query;
-    const query = search ? { title: { $regex: search, $options: 'i' } } : {};
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || '';
+    const category = req.query.category || '';
 
-    const products = await Product.find(query)
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit))
-      .populate('createdBy', 'username');
+    const options = {
+      page,
+      limit,
+      search: search.trim(),
+      category: category.trim()
+    };
 
-    const count = await Product.countDocuments(query);
+    const result = await Product.findWithPagination(options);
 
-    res.json({ products, total: count, page: parseInt(page), pages: Math.ceil(count / limit) });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.json({
+      success: true,
+      products: result.data,
+      total: result.total,
+      pages: result.pages,
+      currentPage: result.currentPage,
+      hasNext: result.hasNext,
+      hasPrev: result.hasPrev
+    });
+  } catch (error) {
+    console.error('Error in listProducts:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching products',
+      error: error.message
+    });
   }
 };
 
-export const getProductById = async (req, res) => {
+// Get single product by ID
+export const getProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate('createdBy', 'username');
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+    const { id } = req.params;
+    const product = await Product.findById(id);
 
-    res.json(product);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      product: product.toJSON()
+    });
+  } catch (error) {
+    console.error('Error in getProduct:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching product',
+      error: error.message
+    });
   }
 };
 
+// Create new product (admin only)
+export const createProduct = async (req, res) => {
+  try {
+    const { name, description, price, image, category, stock } = req.body;
+
+    // Validate product data
+    const productData = {
+      name: name?.trim(),
+      description: description?.trim(),
+      price: parseFloat(price),
+      image: image?.trim(),
+      category: category || 'Other',
+      stock: parseInt(stock) || 0
+    };
+
+    const validation = Product.validateProduct(productData);
+    if (!validation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: validation.errors
+      });
+    }
+
+    const product = new Product(productData);
+    await product.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Product created successfully',
+      product: product.toJSON()
+    });
+  } catch (error) {
+    console.error('Error in createProduct:', error);
+    
+    // Handle mongoose validation errors
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Error creating product',
+      error: error.message
+    });
+  }
+};
+
+// Update product (admin only)
 export const updateProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+    const { id } = req.params;
+    const { name, description, price, image, category, stock } = req.body;
 
-    // 權限檢查，只有 admin 或是商品建立者能修改
-    if (req.user.role !== 'admin' && product.createdBy.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Unauthorized' });
+    // Check if product exists
+    const existingProduct = await Product.findById(id);
+    if (!existingProduct) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
     }
 
-    const { title, description, price, imageUrl } = req.body;
+    // Prepare update data
+    const updateData = {};
+    if (name !== undefined) updateData.name = name.trim();
+    if (description !== undefined) updateData.description = description.trim();
+    if (price !== undefined) updateData.price = parseFloat(price);
+    if (image !== undefined) updateData.image = image.trim();
+    if (category !== undefined) updateData.category = category;
+    if (stock !== undefined) updateData.stock = parseInt(stock);
 
-    product.title = title ?? product.title;
-    product.description = description ?? product.description;
-    product.price = price ?? product.price;
-    product.imageUrl = imageUrl ?? product.imageUrl;
+    // Validate updated data
+    const mergedData = { ...existingProduct.toObject(), ...updateData };
+    const validation = Product.validateProduct(mergedData);
+    if (!validation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: validation.errors
+      });
+    }
 
-    await product.save();
-    res.json(product);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id, 
+      updateData, 
+      { new: true, runValidators: true }
+    );
+
+    res.json({
+      success: true,
+      message: 'Product updated successfully',
+      product: updatedProduct.toJSON()
+    });
+  } catch (error) {
+    console.error('Error in updateProduct:', error);
+    
+    // Handle mongoose validation errors
+    if (error.name === 'ValidationError') {
+      const errors = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Error updating product',
+      error: error.message
+    });
   }
 };
 
+// Delete product (admin only)
 export const deleteProduct = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+    const { id } = req.params;
 
-    // 權限檢查
-    if (req.user.role !== 'admin' && product.createdBy.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Unauthorized' });
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({
+        success: false,
+        message: 'Product not found'
+      });
     }
 
-    await product.deleteOne();
-    res.json({ message: 'Product deleted' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.json({
+      success: true,
+      message: 'Product deleted successfully',
+      product: deletedProduct.toJSON()
+    });
+  } catch (error) {
+    console.error('Error in deleteProduct:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error deleting product',
+      error: error.message
+    });
   }
 };

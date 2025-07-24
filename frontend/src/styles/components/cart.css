@@ -1,0 +1,132 @@
+/* Cart Components */
+.cart-item {
+  @apply flex items-center justify-between bg-white p-4 rounded-lg shadow-sm border mb-4;
+}
+
+.cart-item-image {
+  @apply w-16 h-16 object-cover rounded-md;
+}
+
+.cart-item-content {
+  @apply flex-1 mx-4;
+}
+
+.cart-item-actions {
+  @apply text-right;
+}
+
+.promo-input-container {
+  @apply flex gap-2 mb-4;
+}
+
+.promo-success {
+  @apply bg-green-50 border border-green-200 rounded-md p-3 mb-4;
+}
+
+/* Cart Header */
+.cart-header {
+  @apply flex items-center justify-between mb-6;
+}
+
+/* Cart Empty State */
+.cart-empty-text {
+  @apply text-gray-500 text-lg;
+}
+
+.cart-empty-subtitle {
+  @apply text-gray-400 mt-2;
+}
+
+/* Cart Items List */
+.cart-items-list {
+  @apply space-y-4;
+}
+
+/* Cart Item Details */
+.cart-item-title {
+  @apply font-semibold text-lg;
+}
+
+.cart-item-price {
+  @apply text-gray-600;
+}
+
+.cart-item-total {
+  @apply font-bold text-lg;
+}
+
+.cart-remove-btn {
+  @apply text-red-500 hover:text-red-700 text-sm mt-1;
+}
+
+/* Quantity Controls */
+.cart-quantity-controls {
+  @apply flex items-center space-x-3;
+}
+
+/* Order Summary */
+.order-summary-details {
+  @apply space-y-2;
+}
+
+.order-total {
+  @apply text-xl font-bold;
+}
+
+.price-highlight {
+  @apply text-green-600;
+}
+
+/* Checkout Button */
+.checkout-btn {
+  @apply w-full mt-6 py-3 text-lg font-semibold;
+}
+
+/* Promo Code Success Message */
+.promo-success-text {
+  @apply text-green-600;
+}
+
+.promo-remove-btn {
+  @apply text-red-500 hover:text-red-700 text-sm;
+}
+
+/* Additional Cart Styles */
+.cart-continue-shopping {
+  @apply bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors mt-4;
+}
+
+.cart-promo-help {
+  @apply text-gray-500 text-sm mt-4;
+}
+
+/* Order Summary Divider */
+.order-summary-divider {
+  @apply my-2;
+}
+
+/* Authentication Prompt */
+.auth-prompt {
+  @apply flex space-x-4 justify-center mt-6;
+}
+
+/* Spacing Utilities */
+.space-x-4 > * + * {
+  margin-left: 1rem;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.mt-6 {
+  margin-top: 1.5rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+} 

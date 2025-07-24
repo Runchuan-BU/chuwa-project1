@@ -1,18 +1,22 @@
 import express from 'express';
-import {
-  createProduct,
-  updateProduct,
-  deleteProduct,
-  getProductById,
-  getProducts,
+import { 
+  listProducts, 
+  getProduct, 
+  createProduct, 
+  updateProduct, 
+  deleteProduct 
 } from '../controllers/productController.js';
-import { protect, isAdmin } from '../middleware/authMiddleware.js';
+import { adminAuth } from '../middleware/auth.js';
+
 const router = express.Router();
 
-router.get('/', getProducts);
-router.get('/:id', getProductById);
-router.post('/', protect, isAdmin, createProduct);
-router.put('/:id', protect, isAdmin, updateProduct);
-router.delete('/:id', protect, isAdmin, deleteProduct);
+// Public routes
+router.get('/', listProducts);           // GET /api/products
+router.get('/:id', getProduct);         // GET /api/products/:id
+
+// Protected routes (admin only)
+router.post('/', adminAuth, createProduct);        // POST /api/products
+router.put('/:id', adminAuth, updateProduct);      // PUT /api/products/:id
+router.delete('/:id', adminAuth, deleteProduct);   // DELETE /api/products/:id
 
 export default router;
