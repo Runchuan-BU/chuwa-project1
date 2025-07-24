@@ -1,6 +1,7 @@
 
 import Product from '../models/product.js';
 
+
 export const createProduct = async (req, res) => {
   try {
     const { title, description, price, imageUrl } = req.body;
@@ -34,7 +35,7 @@ export const listProducts = async (req, res) => {
 };
 
 export const getProductById = async (req, res) => {
-  try {
+  try {                         
     const product = await Product.findById(req.params.id).populate('createdBy', 'username');
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
@@ -44,13 +45,14 @@ export const getProductById = async (req, res) => {
   }
 };
 
+//maybe need update how to connect to user
 export const updateProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
-    // 權限檢查，只有 admin 或是商品建立者能修改
-    if (req.user.role !== 'admin' && product.createdBy.toString() !== req.user.id) {
+    // check auth, only admin and the creator can change
+    if (product.createdBy.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Unauthorized' });
     }
 
@@ -73,8 +75,8 @@ export const deleteProduct = async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
-    // 權限檢查
-    if (req.user.role !== 'admin' && product.createdBy.toString() !== req.user.id) {
+    // check auth
+    if (product.createdBy.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Unauthorized' });
     }
 

@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs'; // encrypt password 
-import { use } from 'react';
+
 
 // //to load environment variables from .env
-// dotenv.config();
+ dotenv.config();
 
 // const uri = process.env.MONGO_URI;
 // //add to server
@@ -65,6 +65,36 @@ userSchema.methods.comparePassword = async function (inputPassword) {
                                                //point to current user
 };
           //create mongo model and use schema structure
-const User = mongoose.model(User,userSchema);
+const User = mongoose.model('User',userSchema);
+
+// connect database
+// const uri = process.env.MONGO_URI;
+
+// async function seed() {
+//   try {
+//     await mongoose.connect(uri);
+//     console.log('MongoDB connected');
+
+//     // add user
+//     const user = new User({
+//       username: 'testuser',
+//       email: 'testuser@example.com',
+//       password: '123456',
+//       role: 'user',
+//     });
+
+//     await user.save();
+
+//     console.log('User seeded:', user);
+
+//     // disconnect
+//     await mongoose.disconnect();
+//     console.log('Disconnected from MongoDB');
+//   } catch (err) {
+//     console.error('❌ Error seeding user:', err);
+//   }
+// }
+
+// seed();
 
 export default User;
